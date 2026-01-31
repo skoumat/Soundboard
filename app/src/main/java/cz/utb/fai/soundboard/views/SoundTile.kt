@@ -1,6 +1,5 @@
 package cz.utb.fai.soundboard.views
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -8,14 +7,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextAlign
 
-import cz.utb.fai.soundboard.models.Movie
+import androidx.compose.ui.unit.DpOffset
 
 @Composable
-fun MovieTile(
-    movie: Movie,
+fun SoundTile(
+    name: String,
     onClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -24,60 +24,51 @@ fun MovieTile(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .clickable { onClick() }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(20.dp)
+                    .padding(end = 20.dp)
                     .clickable { onClick() }
             ) {
-                Text(
-                    text = movie.name,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = name, textAlign = TextAlign.Center)
+                    Text(text = "char", style = MaterialTheme.typography.bodySmall)
+                }
             }
 
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
+                modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                IconButton(
-                    onClick = { menuExpanded = true }
-                ) {
+                IconButton(onClick = { menuExpanded = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = null)
                 }
 
                 DropdownMenu(
                     expanded = menuExpanded,
                     onDismissRequest = { menuExpanded = false },
-                    offset = DpOffset(x = (-75).dp, y = (-40).dp) // -x je doleva, -y je nahoru
+                    offset = DpOffset(x = (-8).dp, y = 0.dp)
                 ) {
                     Column(
                         modifier = Modifier
-                            .width(90.dp)
-                            .wrapContentHeight())
-                    {
+                            .width(140.dp)
+                            .wrapContentHeight()
+                    ) {
                         DropdownMenuItem(
                             text = { Text("Edit") },
-                            modifier = Modifier.height(32.dp),
-                            onClick = {
-                                menuExpanded = false
-                            }
+                            onClick = { menuExpanded = false }
                         )
                         DropdownMenuItem(
                             text = { Text("Delete") },
-                            modifier = Modifier.height(32.dp),
-                            onClick = {
-                                menuExpanded = false
-                            }
+                            onClick = { menuExpanded = false }
                         )
                     }
-
                 }
-
             }
         }
     }
