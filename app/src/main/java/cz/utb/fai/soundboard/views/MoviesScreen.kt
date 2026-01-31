@@ -3,6 +3,7 @@ package cz.utb.fai.soundboard.views
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -10,22 +11,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
-import cz.utb.fai.soundboard.models.Movie
+import cz.utb.fai.soundboard.viewModels.MoviesViewModel
 
 @Composable
 fun MoviesScreen(
     navController: NavController,
+
     onMovieClick: (Long) -> Unit
 ) {
     var fabExpanded by remember { mutableStateOf(false) }
 
+    val viewModel: MoviesViewModel = viewModel()
+
     Scaffold(
         floatingActionButton = {
-            Box (
+            Box(
                 contentAlignment = Alignment.BottomEnd
-            ){
+            ) {
                 if (fabExpanded) {
                     Column(
                         horizontalAlignment = Alignment.End,
@@ -68,21 +73,14 @@ fun MoviesScreen(
         ) {
 
             OutlinedTextField(
-                value = "",
-                onValueChange = { e -> {}},
+                value = viewModel.searchQuery,
+                onValueChange = viewModel::onSearchChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Search movies") },
                 singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            val tst = listOf(
-                Movie(1, "Matrix", listOf("Neo", "Trinity" )),
-                Movie(2, "Inception", listOf("Leo", "Zena" )),
-                Movie(2, "Encanto", listOf("Abuela", "Bruno" ))
-            )
-
 
 
             LazyVerticalGrid(
@@ -91,27 +89,13 @@ fun MoviesScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                item{
+                items(viewModel.filteredMovies) { movie ->
                     MovieTile(
-                        movie = tst[0],
-                        onClick = { onMovieClick(tst[0].id) }
+                        movie = movie,
+                        onClick = { onMovieClick(movie.id) }
                     )
-                }
 
-                item{
-                    MovieTile(
-                        movie = tst[1],
-                        onClick = { onMovieClick(tst[1].id) }
-                    )
                 }
-
-                item{
-                    MovieTile(
-                        movie = tst[2],
-                        onClick = { onMovieClick(tst[2].id) }
-                    )
-                }
-
             }
         }
     }

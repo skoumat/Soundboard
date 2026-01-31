@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -11,6 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import cz.utb.fai.soundboard.viewModels.SortingOrder
+
+import cz.utb.fai.soundboard.viewModels.SoundsViewModel
 
 
 @Composable
@@ -19,12 +24,15 @@ fun SoundsScreen() {
     var fabExpanded by remember { mutableStateOf(false) }
     var characterDropdownExpanded by remember { mutableStateOf(false) }
 
+    val viewModel: SoundsViewModel = viewModel()
+
+    val paddingMiddle = 6.dp
 
     Scaffold(
         floatingActionButton = { // TODO: separatni soubor s MovieScreen?
-            Box (
+            Box(
                 contentAlignment = Alignment.BottomEnd
-            ){
+            ) {
                 if (fabExpanded) {
                     Column(
                         horizontalAlignment = Alignment.End,
@@ -69,14 +77,14 @@ fun SoundsScreen() {
 
             // vyhledavaci okno
             OutlinedTextField(
-                value = "",
-                onValueChange = { e -> {}},
+                value = viewModel.searchQuery,
+                onValueChange = viewModel::onSearchChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Search sounds") },
                 singleLine = true
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(paddingMiddle))
 
             // sorting row
             Row(
@@ -85,14 +93,15 @@ fun SoundsScreen() {
                 horizontalArrangement = Arrangement.SpaceEvenly // .spacedBy(12.dp)
             ) {
                 Button(onClick = {
-                    // TODO: ordering
+                    val next = if (viewModel.sortOrder == SortingOrder.ASC) SortingOrder.DESC else SortingOrder.ASC
+                    viewModel.onSortChange(next)
                 }) {
-                    Text("A→Z")
+                    Text(if (viewModel.sortOrder == SortingOrder.ASC) "A→Z" else "Z→A")
                 }
 
                 Box {
                     Button(onClick = { characterDropdownExpanded = true }) {
-                        Text( "Filter by character")
+                        Text(viewModel.characterFilter ?: "Filter by character")
                     }
 
                     DropdownMenu(
@@ -101,15 +110,37 @@ fun SoundsScreen() {
                     ) {
                         DropdownMenuItem(
                             text = { Text("All") },
-                            onClick = {}
+                            onClick = {
+                                viewModel.onCharacterFilter(null)
+                                characterDropdownExpanded = false
+                            }
                         )
 
-                        // TODO: jednotlive postavy nejak dynamicky
+                        viewModel.characters.forEach { character ->
+                            DropdownMenuItem(
+                                text = { Text(character) },
+                                onClick = {
+                                    viewModel.onCharacterFilter(character)
+                                    characterDropdownExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(paddingMiddle))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            )
+            {
+                Text("movie.name", style = MaterialTheme.typography.titleMedium) // TODO: movie name
+            }
+
+            Spacer(modifier = Modifier.height(paddingMiddle))
 
             // obsah
             LazyVerticalGrid(
@@ -118,27 +149,13 @@ fun SoundsScreen() {
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                item {
+                items(viewModel.filteredSounds) { sound ->
                     SoundTile(
-                        name = "aaaaa",
+                        sound = sound,
                         onClick = {}
                     )
-                }
 
-                item {
-                    SoundTile(
-                        name = "bbb",
-                        onClick = {}
-                    )
                 }
-
-                item {
-                    SoundTile(
-                        name = "ccc",
-                        onClick = {}
-                    )
-                }
-
             }
         }
     }

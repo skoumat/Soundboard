@@ -12,10 +12,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.DpOffset
+import cz.utb.fai.soundboard.models.Sound
 
 @Composable
 fun SoundTile(
-    name: String,
+    sound: Sound,
     onClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -37,8 +38,8 @@ fun SoundTile(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = name, textAlign = TextAlign.Center)
-                    Text(text = "char", style = MaterialTheme.typography.bodySmall)
+                    Text(text = sound.name, textAlign = TextAlign.Center)
+                    Text(text = sound.character, style = MaterialTheme.typography.bodySmall)
                 }
             }
 
