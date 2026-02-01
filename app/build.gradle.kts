@@ -61,6 +61,9 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui.compose)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

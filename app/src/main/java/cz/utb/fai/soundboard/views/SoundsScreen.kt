@@ -13,14 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cz.utb.fai.soundboard.SoundboardApp
+import cz.utb.fai.soundboard.services.ExoPlayerObj
 import cz.utb.fai.soundboard.viewModels.SortingOrder
 
 import cz.utb.fai.soundboard.viewModels.SoundsViewModel
 import cz.utb.fai.soundboard.viewModels.SoundsViewModelFatory
+import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 
 @Composable
@@ -34,6 +38,8 @@ fun SoundsScreen(
         )
     )
 
+    val context = LocalContext.current
+
     val sounds by viewModel.filteredSounds.collectAsState()
     val characters by viewModel.characters.collectAsState()
 
@@ -44,6 +50,21 @@ fun SoundsScreen(
     val paddingMiddle = 6.dp
 
     // TODO: back button?
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                ExoPlayerObj.stop()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         floatingActionButton = { // TODO: separatni soubor s MovieScreen?
@@ -174,7 +195,14 @@ fun SoundsScreen(
                         viewModel = viewModel,
                         navController = navController,
                         onClick = {
-                            // TODO: prehrat
+                            val uri = sound.filePathString.toUri()
+                            if(ExoPlayerObj.lastPlayedUri == uri && ExoPlayerObj.isNowPlaying){
+                                ExoPlayerObj.stop()
+                            }
+                            else{
+                                ExoPlayerObj.play(context, uri)
+                            }
+
                         }
                     )
                 }
