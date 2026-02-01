@@ -11,8 +11,10 @@ val json = Json { encodeDefaults = true }
 fun serialize(characters: List<String>): String =
     json.encodeToString(characters)
 
-fun parse(charactersJson: String): List<String> =
-    json.decodeFromString(charactersJson)
+fun parse(charactersJson: String?): List<String>{
+    return if (charactersJson != null) json.decodeFromString(charactersJson) else emptyList()
+}
+
 
 
 fun MovieEntity.toDomainModel(): MovieModel {

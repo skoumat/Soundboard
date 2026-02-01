@@ -56,13 +56,13 @@ fun MoviesScreen(
                             Text("Add movie")
                         }
 
-                        SmallFloatingActionButton(
-                            onClick = {
-                                fabExpanded = false
-                            }
-                        ) {
-                            Text("Add sound")
-                        }
+//                        SmallFloatingActionButton(
+//                            onClick = {
+//                                fabExpanded = false
+//                            }
+//                        ) {
+//                            Text("Add sound")
+//                        }
                     }
                 }
 

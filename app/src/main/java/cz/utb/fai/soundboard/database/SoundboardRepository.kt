@@ -2,9 +2,11 @@ package cz.utb.fai.soundboard.database
 
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 import cz.utb.fai.soundboard.domainModels.MovieModel
+import cz.utb.fai.soundboard.domainModels.SoundModel
 import cz.utb.fai.soundboard.mappers.toDomainModel
 import cz.utb.fai.soundboard.mappers.toEntityModel
 import cz.utb.fai.soundboard.mappers.parse
@@ -25,6 +27,17 @@ class SoundboardRepository (
         return movieDao.getMovie(id).toDomainModel()
     }
 
+    fun getMovieCharacters(movieId: Long) : Flow<List<String>>  = flow{
+        val characters = parse(
+            movieDao.getMovieCharacters(movieId)
+        )
+            .toList()
+            .distinct()
+
+        emit(characters)
+    }
+
+
     suspend fun addMovie(movie: MovieModel){
         movieDao.addMovie(movie.toEntityModel())
     }
@@ -33,6 +46,35 @@ class SoundboardRepository (
     }
     suspend fun deleteMovie(movieId: Long){
         movieDao.deleteMovie(getMovie(movieId).toEntityModel())
+    }
+
+
+    fun getAllSoundsFlow(movieId: Long): Flow<List<SoundModel>> {
+        return soundDao.getAllSoundsFlow(movieId).map { entities ->
+            entities.map { entity ->
+                entity.toDomainModel()
+            }
+        }
+    }
+
+    suspend fun getSound(id: Long) : SoundModel{
+        return soundDao.getSound(id).toDomainModel()
+    }
+
+    suspend fun addSound(sound: SoundModel){
+        soundDao.addSound(sound.toEntityModel())
+    }
+    suspend fun updateSound(sound: SoundModel){
+        soundDao.updateSound(sound.toEntityModel())
+    }
+    suspend fun deleteSound(soundId: Long){
+        soundDao.deleteSound(getSound(soundId).toEntityModel())
+    }
+
+    fun getSoundCharacters(soundId : Long) : Flow<List<String>> = flow{
+        val soundChars = parse(soundDao.getSoundCharacters(soundId)).toList().distinct()
+
+        emit(soundChars)
     }
 
 

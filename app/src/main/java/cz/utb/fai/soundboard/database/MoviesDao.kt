@@ -27,6 +27,9 @@ interface MoviesDao {
     @Query("SELECT * FROM movies WHERE id == :id LIMIT 1")
     suspend fun getMovie(id: Long): MovieEntity
 
+    @Query("SELECT charactersJson FROM movies WHERE id == :id LIMIT 1")
+    suspend fun getMovieCharacters(id: Long): String?
+
     // TODO: do I even need seraching via text and filtering
 
     // Select specific subject by shortcut and department (or just shortcut if unique)

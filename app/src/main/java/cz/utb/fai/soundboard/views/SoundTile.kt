@@ -12,11 +12,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.DpOffset
+import androidx.navigation.NavController
 import cz.utb.fai.soundboard.domainModels.SoundModel
+import cz.utb.fai.soundboard.navigation.Routes
+import cz.utb.fai.soundboard.viewModels.SoundsViewModel
 
 @Composable
 fun SoundTile(
     sound: SoundModel,
+    viewModel: SoundsViewModel,
+    navController: NavController,
     onClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -39,7 +44,7 @@ fun SoundTile(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = sound.name, textAlign = TextAlign.Center)
-                    Text(text = sound.character, style = MaterialTheme.typography.bodySmall)
+                    Text(text = sound.characters.joinToString(", "), style = MaterialTheme.typography.bodySmall)
                 }
             }
 
@@ -62,11 +67,17 @@ fun SoundTile(
                     ) {
                         DropdownMenuItem(
                             text = { Text("Edit") },
-                            onClick = { menuExpanded = false }
+                            onClick = {
+                                menuExpanded = false
+                                navController.navigate("${Routes.EDIT_SOUND}?soundId=${sound.id}")
+                            }
                         )
                         DropdownMenuItem(
                             text = { Text("Delete") },
-                            onClick = { menuExpanded = false }
+                            onClick = {
+                                menuExpanded = false
+                                viewModel.deleteSound(sound.id!!)
+                            }
                         )
                     }
                 }

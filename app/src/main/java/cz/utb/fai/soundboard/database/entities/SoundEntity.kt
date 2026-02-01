@@ -8,7 +8,7 @@ data class SoundEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
-    val character: String,
+    val charactersJson: String,
     val movieId: Long,
     val filePathString: String
 )

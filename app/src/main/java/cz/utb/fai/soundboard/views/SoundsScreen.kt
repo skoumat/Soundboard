@@ -11,22 +11,42 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import cz.utb.fai.soundboard.SoundboardApp
 import cz.utb.fai.soundboard.viewModels.SortingOrder
 
 import cz.utb.fai.soundboard.viewModels.SoundsViewModel
+import cz.utb.fai.soundboard.viewModels.SoundsViewModelFatory
 
 
 @Composable
-fun SoundsScreen() {
+fun SoundsScreen(
+    navController: NavController,
+    onAddSound: () -> Unit
+) {
+
+    val savedStateHandle = remember { SavedStateHandle() }
+    val viewModel: SoundsViewModel = viewModel(
+        factory = SoundsViewModelFatory(
+            (LocalContext.current.applicationContext as SoundboardApp).repository,
+            savedStateHandle
+        )
+    )
+
+    val sounds by viewModel.filteredSounds.collectAsState()
+    val characters by viewModel.characters.collectAsState()
+
 
     var fabExpanded by remember { mutableStateOf(false) }
     var characterDropdownExpanded by remember { mutableStateOf(false) }
 
-    val viewModel: SoundsViewModel = viewModel()
-
     val paddingMiddle = 6.dp
+
+    // TODO: back button?
 
     Scaffold(
         floatingActionButton = { // TODO: separatni soubor s MovieScreen?
@@ -39,17 +59,19 @@ fun SoundsScreen() {
                         verticalArrangement = Arrangement.spacedBy(3.dp),
                         modifier = Modifier.padding(bottom = 69.dp)
                     ) {
-                        SmallFloatingActionButton(
-                            onClick = {
-                                fabExpanded = false
-                            }
-                        ) {
-                            Text("Add movie")
-                        }
+//                        SmallFloatingActionButton(
+//                            onClick = {
+//                                fabExpanded = false
+//                                // TODO: novy film?
+//                            }
+//                        ) {
+//                            Text("Add movie")
+//                        }
 
                         SmallFloatingActionButton(
                             onClick = {
                                 fabExpanded = false
+                                onAddSound()
                             }
                         ) {
                             Text("Add sound")
@@ -116,7 +138,7 @@ fun SoundsScreen() {
                             }
                         )
 
-                        viewModel.characters.forEach { character ->
+                        characters.forEach { character ->
                             DropdownMenuItem(
                                 text = { Text(character) },
                                 onClick = {
@@ -149,12 +171,15 @@ fun SoundsScreen() {
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(viewModel.filteredSounds) { sound ->
+                items(sounds) { sound ->
                     SoundTile(
                         sound = sound,
-                        onClick = {}
+                        viewModel = viewModel,
+                        navController = navController,
+                        onClick = {
+                            // TODO: prehrat
+                        }
                     )
-
                 }
             }
         }

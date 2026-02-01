@@ -22,6 +22,7 @@ class MoviesViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val repository: SoundboardRepository
 ) : ViewModel() {
+
     var searchQuery by mutableStateOf(
         savedStateHandle["searchQuery"] ?: ""
     )

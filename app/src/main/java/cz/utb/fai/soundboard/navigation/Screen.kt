@@ -14,6 +14,14 @@ sealed class Screen(val route: String) {
             }
             else return "edit_movie"
         }
+    }
 
+    data object EditSound : Screen(Routes.EDIT_SOUND){
+        fun create(soundId: Long? = null): String {
+            if (soundId != null) {
+                return  "edit_sound?soundId=$soundId"
+            }
+            else return "edit_sound"
+        }
     }
 }

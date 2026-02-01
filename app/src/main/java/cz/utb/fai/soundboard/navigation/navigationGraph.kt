@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cz.utb.fai.soundboard.views.EditMovieScreen
+import cz.utb.fai.soundboard.views.EditSoundScreen
 
 import cz.utb.fai.soundboard.views.MoviesScreen
 import cz.utb.fai.soundboard.views.SoundsScreen
@@ -36,7 +37,12 @@ fun SoundboardNavGraph() {
             route = Screen.Sounds.route,
             arguments = listOf(navArgument("movieId") { type = NavType.LongType })
         ) {
-            SoundsScreen()
+            SoundsScreen(
+                navController = navController,
+                onAddSound = {
+                    navController.navigate(Screen.EditSound.route)
+                }
+            )
         }
 
         composable(
@@ -45,11 +51,24 @@ fun SoundboardNavGraph() {
                 type = NavType.LongType
                 defaultValue = -1
             })
-        ) { backStackEntry ->
+        ) { backStackEntry -> // TODO: lze udelat pres mutableLongStateOf viz SoundsViewModel
 
             val movieId = backStackEntry.arguments?.getLong("movieId")
             EditMovieScreen(
                 movieId = movieId,
+                navController = navController)
+        }
+        composable(
+            route = Screen.EditSound.route,
+            arguments = listOf(navArgument("soundId") {
+                type = NavType.LongType
+                defaultValue = -1
+            })
+        ) { backStackEntry -> // TODO: lze udelat pres mutableLongStateOf viz SoundsViewModel
+
+            val soundId = backStackEntry.arguments?.getLong("soundId")
+            EditSoundScreen(
+                soundId = soundId,
                 navController = navController)
         }
     }
