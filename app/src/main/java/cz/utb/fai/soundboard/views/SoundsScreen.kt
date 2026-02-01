@@ -92,7 +92,9 @@ fun SoundsScreen(
                                 onAddSound(viewModel.movieId)
                             }
                         ) {
-                            Text("Add sound")
+                            Text(
+                                "Add sound",
+                                modifier = Modifier.padding(10.dp))
                         }
                     }
                 }

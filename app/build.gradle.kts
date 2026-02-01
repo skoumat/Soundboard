@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.gson)
 
+    implementation(libs.androidx.core.splashscreen)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

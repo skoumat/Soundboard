@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Soundboard" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Soundboard" parent="android:Theme.Material.Light.NoActionBar"/>
+
+
+    <style name="Theme.Soundboard.Splash" parent="Theme.SplashScreen">
+        <!-- bg color -->
+        <item name="windowSplashScreenBackground">@color/black</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+
+        <!-- icon bg color -->
+        <item name="windowSplashScreenIconBackgroundColor">@color/black</item>
+
+        <!-- theme after this one -->
+        <item name="postSplashScreenTheme">@style/Theme.Soundboard</item>
+    </style>
+
+
+
 </resources>

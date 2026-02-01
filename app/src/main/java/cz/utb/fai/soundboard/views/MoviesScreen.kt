@@ -54,7 +54,10 @@ fun MoviesScreen(
                                 onAddMovie()
                             }
                         ) {
-                            Text("Add movie")
+                            Text(
+                                "Add movie",
+                                modifier = Modifier.padding(10.dp)
+                            )
                         }
 
 //                        SmallFloatingActionButton(
