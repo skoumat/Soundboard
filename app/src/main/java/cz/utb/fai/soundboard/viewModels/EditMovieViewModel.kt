@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,14 +22,7 @@ class EditMovieViewModel(
 
     var movie by mutableStateOf<MovieModel?>(null)
 
-    init {
-        val movieId = movieIdMutable
-        if (movieId != null){
-            viewModelScope.launch {
-                movie = repository.getMovie(movieId)
-            }
-        }
-    }
+
 
     var movieName by mutableStateOf(
         savedStateHandle["movieName"] ?: ""
@@ -37,6 +31,19 @@ class EditMovieViewModel(
     var movieCharacters by mutableStateOf(
         savedStateHandle["characters"] ?: emptyList<String>()
     )
+
+    init {
+        val movieId = movieIdMutable
+        Log.e("XXXXXXXXXXX", "MovieId ${movieId}")
+        if (movieId != null && movieId >= 0){
+            viewModelScope.launch {
+                movie = repository.getMovie(movieId)
+                Log.e("TTTTTTTTTTTT", "${movie!!.name}")
+                movieName = movie!!.name
+                movieCharacters = movie!!.characters
+            }
+        }
+    }
 
     var newCharacter by mutableStateOf("")
 
@@ -74,7 +81,7 @@ class EditMovieViewModel(
     fun saveMovie() {
         viewModelScope.launch {
             val movieId = movieIdMutable
-            if (movieId != null){
+            if (movieId != null && movieId >= 0){
                 repository.updateMovie(MovieModel(id = movieId, name = movieName, characters = movieCharacters))
             }
             else{

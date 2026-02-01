@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -105,7 +106,10 @@ fun MoviesScreen(
                         movie = movie,
                         navController = navController,
                         viewModel = viewModel,
-                        onClick = { onMovieClick(movie.id!!) }
+                        onClick = {
+                            Log.e("BBBBBBBBBBBBBB", "MovieId = ${movie.id}")
+                            onMovieClick(movie.id!!)
+                        }
                     )
                 }
             }

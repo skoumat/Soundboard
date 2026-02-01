@@ -17,11 +17,11 @@ sealed class Screen(val route: String) {
     }
 
     data object EditSound : Screen(Routes.EDIT_SOUND){
-        fun create(soundId: Long? = null): String {
+        fun create(movieId: Long?, soundId: Long? = null): String {
             if (soundId != null) {
-                return  "edit_sound?soundId=$soundId"
+                return  "edit_sound/$movieId?soundId=$soundId"
             }
-            else return "edit_sound"
+            else return "edit_sound/$movieId"
         }
     }
 }

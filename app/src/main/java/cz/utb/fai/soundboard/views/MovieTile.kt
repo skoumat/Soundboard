@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.views
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -70,7 +71,8 @@ fun MovieTile(
                             modifier = Modifier.height(32.dp),
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate("${Routes.EDIT_MOVIE}?movieId=${movie.id}")
+                                Log.e("PPPPPPPPPPPP", "${movie.id}")
+                                navController.navigate("edit_movie/${movie.id}")
                             }
                         )
                         DropdownMenuItem(

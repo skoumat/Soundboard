@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+
 import cz.utb.fai.soundboard.SoundboardApp
 import cz.utb.fai.soundboard.viewModels.EditMovieViewModel
 import cz.utb.fai.soundboard.viewModels.EditMovieViewModelFactory
@@ -26,9 +27,8 @@ fun EditMovieScreen(
     movieId: Long?,
     navController: NavController,
 ) {
-    val savedStateHandle = remember { SavedStateHandle() }
     val viewModel: EditMovieViewModel = viewModel(
-        factory = EditMovieViewModelFactory((LocalContext.current.applicationContext as SoundboardApp).repository, savedStateHandle)
+        factory = EditMovieViewModelFactory((LocalContext.current.applicationContext as SoundboardApp).repository)
     )
 
     Scaffold { padding ->

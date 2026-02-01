@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,22 +26,11 @@ fun SoundboardNavGraph() {
             MoviesScreen(
                 navController = navController,
                 onMovieClick = { movieId ->
+                    Log.e("CCCCCCCCCCCC", "MovieId = ${movieId}")
                     navController.navigate(Screen.Sounds.create(movieId))
                 },
                 onAddMovie = {
                     navController.navigate(Screen.EditMovie.route)
-                }
-            )
-        }
-
-        composable(
-            route = Screen.Sounds.route,
-            arguments = listOf(navArgument("movieId") { type = NavType.LongType })
-        ) {
-            SoundsScreen(
-                navController = navController,
-                onAddSound = {
-                    navController.navigate(Screen.EditSound.route)
                 }
             )
         }
@@ -58,11 +48,33 @@ fun SoundboardNavGraph() {
                 movieId = movieId,
                 navController = navController)
         }
+
+
+        composable(
+            route = Screen.Sounds.route,
+            arguments = listOf(
+                navArgument("movieId") {
+                    type = NavType.LongType
+                })
+        ) {
+            SoundsScreen(
+                navController = navController,
+                onAddSound = { movieId ->
+                    navController.navigate(Screen.EditSound.create(movieId = movieId))
+                }
+            )
+        }
+
         composable(
             route = Screen.EditSound.route,
-            arguments = listOf(navArgument("soundId") {
-                type = NavType.LongType
-                defaultValue = -1
+            arguments = listOf(
+                navArgument("movieId") {
+                    type = NavType.LongType
+                    defaultValue = -1
+                },
+                navArgument( "soundId") {
+                    type = NavType.LongType
+                    defaultValue = -1
             })
         ) { backStackEntry -> // TODO: lze udelat pres mutableLongStateOf viz SoundsViewModel
 

@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 import cz.utb.fai.soundboard.database.SoundboardRepository
+import cz.utb.fai.soundboard.domainModels.MovieModel
 import cz.utb.fai.soundboard.domainModels.SoundModel
 import kotlinx.coroutines.launch
 
@@ -28,8 +30,25 @@ class SoundsViewModel(
 ) : ViewModel() {
 
     var movieId by mutableLongStateOf(
-        savedStateHandle.get<Long>("movieId") ?: 0L
+        savedStateHandle.get<Long>("movieId") ?: -1L
     )
+
+    var movieName by mutableStateOf( "")
+
+    var movie by mutableStateOf<MovieModel?>(null)
+
+        init {
+            val movieId = movieId
+            Log.e("XXXXXXXXXXX", "MovieId ${movieId}")
+            if (movieId != null && movieId >= 0){
+                viewModelScope.launch {
+                    movie = repository.getMovie(movieId)
+                    Log.e("TTTTTTTTTTTT", "${movie!!.name}")
+                    movieName = movie!!.name
+                }
+            }
+        }
+
 
     var searchQuery by mutableStateOf(savedStateHandle["searchQuery"] ?: "")
 

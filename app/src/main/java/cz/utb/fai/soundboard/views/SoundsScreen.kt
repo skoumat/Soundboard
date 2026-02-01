@@ -26,14 +26,11 @@ import cz.utb.fai.soundboard.viewModels.SoundsViewModelFatory
 @Composable
 fun SoundsScreen(
     navController: NavController,
-    onAddSound: () -> Unit
+    onAddSound: (movieId: Long) -> Unit
 ) {
-
-    val savedStateHandle = remember { SavedStateHandle() }
     val viewModel: SoundsViewModel = viewModel(
         factory = SoundsViewModelFatory(
-            (LocalContext.current.applicationContext as SoundboardApp).repository,
-            savedStateHandle
+            (LocalContext.current.applicationContext as SoundboardApp).repository
         )
     )
 
@@ -71,7 +68,7 @@ fun SoundsScreen(
                         SmallFloatingActionButton(
                             onClick = {
                                 fabExpanded = false
-                                onAddSound()
+                                onAddSound(viewModel.movieId)
                             }
                         ) {
                             Text("Add sound")
@@ -159,7 +156,7 @@ fun SoundsScreen(
                 horizontalArrangement = Arrangement.Center
             )
             {
-                Text("movie.name", style = MaterialTheme.typography.titleMedium) // TODO: movie name
+                Text(viewModel.movieName, style = MaterialTheme.typography.titleMedium) // TODO: movie name
             }
 
             Spacer(modifier = Modifier.height(paddingMiddle))

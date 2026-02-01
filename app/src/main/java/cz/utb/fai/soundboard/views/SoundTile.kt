@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -69,7 +70,8 @@ fun SoundTile(
                             text = { Text("Edit") },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate("${Routes.EDIT_SOUND}?soundId=${sound.id}")
+                                Log.e("AAAAAAAAAAAAAAAAAAA", "MovieId = ${viewModel.movieId}" )
+                                navController.navigate("edit_sound/${viewModel.movieId}?soundId=${sound.id}")
                             }
                         )
                         DropdownMenuItem(
