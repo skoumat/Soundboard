@@ -10,12 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
-import cz.utb.fai.soundboard.models.Movie
+import cz.utb.fai.soundboard.domainModels.MovieModel
+import cz.utb.fai.soundboard.navigation.Routes
+import cz.utb.fai.soundboard.viewModels.MoviesViewModel
 
 @Composable
 fun MovieTile(
-    movie: Movie,
+    movie: MovieModel,
+    navController: NavController,
+    viewModel: MoviesViewModel,
     onClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -65,6 +70,7 @@ fun MovieTile(
                             modifier = Modifier.height(32.dp),
                             onClick = {
                                 menuExpanded = false
+                                navController.navigate("${Routes.EDIT_MOVIE}?movieId=${movie.id}")
                             }
                         )
                         DropdownMenuItem(
@@ -72,12 +78,11 @@ fun MovieTile(
                             modifier = Modifier.height(32.dp),
                             onClick = {
                                 menuExpanded = false
+                                viewModel.deleteMovie(movie.id!!)
                             }
                         )
                     }
-
                 }
-
             }
         }
     }

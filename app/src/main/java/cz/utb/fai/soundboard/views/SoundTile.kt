@@ -12,11 +12,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.DpOffset
-import cz.utb.fai.soundboard.models.Sound
+import cz.utb.fai.soundboard.domainModels.SoundModel
 
 @Composable
 fun SoundTile(
-    sound: Sound,
+    sound: SoundModel,
     onClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }

@@ -5,31 +5,50 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import cz.utb.fai.soundboard.models.Movie
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import android.util.Log
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.combine
+
+import cz.utb.fai.soundboard.database.SoundboardRepository
+import cz.utb.fai.soundboard.domainModels.MovieModel
 
 class MoviesViewModel(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val repository: SoundboardRepository
 ) : ViewModel() {
-
     var searchQuery by mutableStateOf(
         savedStateHandle["searchQuery"] ?: ""
     )
         private set
 
-    private val testMovies = listOf(
-        Movie(1, "Pulp Fiction", mutableListOf("A", "B")),
-        Movie(2, "The Matrix", mutableListOf("Neo", "Trinity")),
-        Movie(3, "Inception", mutableListOf("DiCaprio", "Zena")),
-        Movie(4, "Interstellar", mutableListOf("Otec", "Holka"))
-    )
+    private val allMoviesFlow: Flow<List<MovieModel>> = repository.getAllMoviesFlow()
 
-    val filteredMovies: List<Movie>
-        get() = testMovies.filter {
-            it.name.contains(searchQuery, ignoreCase = true)
-        }
+    val filteredMovies: StateFlow<List<MovieModel>> = combine(
+        allMoviesFlow,
+        snapshotFlow { searchQuery }
+    ) { movies, query ->
+        if (query.isBlank()) movies
+        else movies.filter { it.name.contains(query, ignoreCase = true) }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        emptyList()
+    )
 
     fun onSearchChange(value: String) {
         searchQuery = value
         savedStateHandle["searchQuery"] = value
+    }
+
+    fun deleteMovie(movieId: Long){
+        viewModelScope.launch {
+            repository.deleteMovie(movieId)
+        }
     }
 }

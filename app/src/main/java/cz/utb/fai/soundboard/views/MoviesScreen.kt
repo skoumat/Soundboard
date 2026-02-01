@@ -11,20 +11,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import cz.utb.fai.soundboard.SoundboardApp
+
+import androidx.compose.ui.platform.LocalContext
 
 import cz.utb.fai.soundboard.viewModels.MoviesViewModel
+import cz.utb.fai.soundboard.viewModels.MoviesViewModelFactory
 
 @Composable
 fun MoviesScreen(
     navController: NavController,
-
-    onMovieClick: (Long) -> Unit
+    onMovieClick: (Long) -> Unit,
+    onAddMovie: () -> Unit
 ) {
-    var fabExpanded by remember { mutableStateOf(false) }
+    val savedStateHandle = remember { SavedStateHandle() }
+    val viewModel: MoviesViewModel = viewModel(
+        factory = MoviesViewModelFactory((LocalContext.current.applicationContext as SoundboardApp).repository, savedStateHandle)
+    )
 
-    val viewModel: MoviesViewModel = viewModel()
+    val movies by viewModel.filteredMovies.collectAsState()
+
+    var fabExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -40,6 +50,7 @@ fun MoviesScreen(
                         SmallFloatingActionButton(
                             onClick = {
                                 fabExpanded = false
+                                onAddMovie()
                             }
                         ) {
                             Text("Add movie")
@@ -89,12 +100,13 @@ fun MoviesScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(viewModel.filteredMovies) { movie ->
+                items(movies) { movie ->
                     MovieTile(
                         movie = movie,
-                        onClick = { onMovieClick(movie.id) }
+                        navController = navController,
+                        viewModel = viewModel,
+                        onClick = { onMovieClick(movie.id!!) }
                     )
-
                 }
             }
         }

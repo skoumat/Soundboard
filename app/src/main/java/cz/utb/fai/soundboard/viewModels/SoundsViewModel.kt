@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import cz.utb.fai.soundboard.models.Sound
+
+import cz.utb.fai.soundboard.domainModels.SoundModel
 
 enum class SortingOrder {
     ASC, DESC
@@ -22,16 +23,16 @@ class SoundsViewModel(
     var characterFilter by mutableStateOf(savedStateHandle["characterFilter"] as String?)
 
     private val testSounds = listOf(
-        Sound(1, "Proc se na me tak divas", "Blue", ""),
-        Sound(2, "Ahooj", "Kate", ""),
-        Sound(3, "Omlouvam se", "Norbit", ""),
-        Sound(3, "To vtip", "Wong", "")
+        SoundModel(1, "Proc se na me tak divas", "Blue", 0,""),
+        SoundModel(2, "Ahooj", "Kate", 0, ""),
+        SoundModel(3, "Omlouvam se", "Norbit", 0, ""),
+        SoundModel(3, "To vtip", "Wong", 0, "")
     )
 
     val characters: List<String>
-        get() = testSounds.map { it.character }.distinct()
+        get() = filteredSounds.map { it.character }.distinct()
 
-    val filteredSounds: List<Sound>
+    val filteredSounds: List<SoundModel>
         get() {
             var list = testSounds
 
