@@ -3,10 +3,6 @@ package cz.utb.fai.soundboard.navigation
 sealed class Screen(val route: String) {
     data object Movies : Screen(Routes.MOVIES)
 
-    data object Sounds : Screen(Routes.SOUNDS) {
-        fun create(movieId: Long) = "sounds/$movieId"
-    }
-
     data object EditMovie : Screen(Routes.EDIT_MOVIE){
         fun create(movieId: Long? = null): String {
             if (movieId != null) {
@@ -14,6 +10,18 @@ sealed class Screen(val route: String) {
             }
             else return "edit_movie"
         }
+    }
+
+    data object MovieDetails : Screen(Routes.MOVIE_DETAILS){
+        fun create(movieName: String?): String {
+            return  "movie_details?movieName=$movieName"
+        }
+    }
+
+
+
+    data object Sounds : Screen(Routes.SOUNDS) {
+        fun create(movieId: Long) = "sounds/$movieId"
     }
 
     data object EditSound : Screen(Routes.EDIT_SOUND){

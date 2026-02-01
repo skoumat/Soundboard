@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cz.utb.fai.soundboard.views.EditMovieScreen
 import cz.utb.fai.soundboard.views.EditSoundScreen
+import cz.utb.fai.soundboard.views.MovieDetailsScreen
 
 import cz.utb.fai.soundboard.views.MoviesScreen
 import cz.utb.fai.soundboard.views.SoundsScreen
@@ -47,6 +48,19 @@ fun SoundboardNavGraph() {
             EditMovieScreen(
                 movieId = movieId,
                 navController = navController)
+        }
+
+        composable(
+            route = Screen.MovieDetails.route,
+            arguments = listOf(
+                navArgument("movieName") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                })
+        ) {
+            MovieDetailsScreen(
+                navController = navController
+            )
         }
 
 

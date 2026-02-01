@@ -11,9 +11,14 @@ import cz.utb.fai.soundboard.mappers.toDomainModel
 import cz.utb.fai.soundboard.mappers.toEntityModel
 import cz.utb.fai.soundboard.mappers.parse
 
+import cz.utb.fai.soundboard.services.api.MovieDetailsModel
+import cz.utb.fai.soundboard.services.api.WikidataApiService
+import cz.utb.fai.soundboard.services.api.WikidataResponse
+
 class SoundboardRepository (
     private val movieDao: MoviesDao,
     private val soundDao: SoundsDao,
+    private val apiService: WikidataApiService
 ) {
     fun getAllMoviesFlow(): Flow<List<MovieModel>> {
         return movieDao.getAllMoviesFlow().map { entities ->
@@ -78,37 +83,56 @@ class SoundboardRepository (
     }
 
 
-//    suspend fun getMovieInfo(): String? {
-//        try {
-//            // 1. Try to fetch from Network
-//            val networkModel = apiService.getSubjectInfo(katedra, zkratka)
-//
-//            if (networkModel != null) {
-//                val domainModel = networkModel.asDomainModel()
-//
-//                // 2. Save/Cache into Database
-//                // Ensure you have creating the mapping function: SubjectInfoDomain.asEntityModel()
-//                movieDao.insertMovie(domainModel.asEntityModel())
-//
-//                Log.d("Repository", "Data loaded from API and cached.")
-//                return domainModel
-//            }
-//        } catch (e: Exception) {
-//            // Log the error and return null to signal failure
-//            Log.e("Repository", "API call failed", e)
-//
-//        }
-//        // 3. Fallback: Try to fetch from Database (Cache)
-//        try {
-//            val entity = dao.selectByShortcut(zkratka)
-//            if (entity != null) {
-//                Log.d("Repository", "Data loaded from Database cache.")
-//                return entity.asDomainModel()
-//            }
-//        } catch (e: Exception) {
-//            Log.e("Repository", "Database fallback failed", e)
-//        }
-//
-//        return null
-//    }
+    suspend fun fetchMoviesFromWiki(name: String): List<MovieDetailsModel> {
+        val sparqlQuery = """
+        SELECT ?movie ?movieLabel ?directorLabel ?releaseDate ?actorLabel WHERE {
+          ?movie wdt:P31 wd:Q11424;        # instance of film
+                 rdfs:label "$name"@en.  # exact match by name
+          OPTIONAL { ?movie wdt:P57 ?director. }
+          OPTIONAL { ?movie wdt:P161 ?actor. }
+          OPTIONAL { ?movie wdt:P577 ?releaseDate. }
+          SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+        }
+    """.trimIndent()
+
+        var response : WikidataResponse? = null
+        Log.e("fetchMoviesFromWiki", "before response")
+        try{
+            response = apiService.getMovies(sparqlQuery)
+        } catch (e: Exception) {
+            Log.e("WIKIDATA", e.toString())
+        }
+
+        Log.e("fetchMoviesFromWiki", "after response")
+
+        val moviesMap = mutableMapOf<String, MovieDetailsModel>()
+
+        if (response == null)
+            return emptyList()
+
+        response.results.bindings.forEach { binding ->
+            val title = binding.movieLabel?.value ?: return@forEach
+            val director = binding.directorLabel?.value
+            val releaseDate = binding.releaseDate?.value
+            val actor = binding.actorLabel?.value
+
+            val existing = moviesMap[title]
+            if (existing != null) {
+                val updatedCast = existing.cast.toMutableSet()
+                if (actor != null) updatedCast.add(actor)
+                moviesMap[title] = existing.copy(cast = updatedCast.toList())
+            } else {
+                moviesMap[title] = MovieDetailsModel(
+                    title = title,
+                    director = director,
+                    releaseDate = releaseDate,
+                    cast = if (actor != null) listOf(actor) else emptyList()
+                )
+            }
+        }
+
+        Log.e("fetchMoviesFromWiki", "after mapping")
+
+        return moviesMap.values.toList()
+    }
 }

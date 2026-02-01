@@ -9,12 +9,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
@@ -68,12 +66,28 @@ fun EditMovieScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
 
-                OutlinedTextField(
-                    value = viewModel.movieName,
-                    onValueChange = viewModel::onMovieNameChange,
-                    label = { Text("Movie name") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    OutlinedTextField(
+                        value = viewModel.movieName,
+                        onValueChange = viewModel::onMovieNameChange,
+                        label = { Text("Movie name") },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    Button(
+                        onClick = {
+                            navController.navigate("movie_details?movieName=${viewModel.movieName}")
+                        }
+                    ) {
+                        Text("Get details")
+                    }
+                }
+
+
 
                 Text("Characters", style = MaterialTheme.typography.titleMedium)
 

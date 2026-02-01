@@ -49,5 +49,4 @@ object ExoPlayerObj {
     private fun onPlaybackFinished() {
         isNowPlaying = false
     }
-
 }
