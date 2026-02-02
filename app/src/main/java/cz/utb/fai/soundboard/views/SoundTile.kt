@@ -10,12 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
-
 import androidx.compose.ui.unit.DpOffset
 import androidx.navigation.NavController
+
+import cz.utb.fai.soundboard.R
 import cz.utb.fai.soundboard.domainModels.SoundModel
-import cz.utb.fai.soundboard.navigation.Routes
 import cz.utb.fai.soundboard.viewModels.SoundsViewModel
 
 @Composable
@@ -52,8 +53,12 @@ fun SoundTile(
             Box(
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                IconButton(onClick = { menuExpanded = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = null)
+                IconButton(onClick = { menuExpanded = true }) { // TODO: jako FAB?
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = null,
+                        tint = colorResource(R.color.green)
+                    )
                 }
 
                 DropdownMenu(
@@ -70,7 +75,6 @@ fun SoundTile(
                             text = { Text("Edit") },
                             onClick = {
                                 menuExpanded = false
-                                Log.e("AAAAAAAAAAAAAAAAAAA", "MovieId = ${viewModel.movieId}" )
                                 navController.navigate("edit_sound/${viewModel.movieId}?soundId=${sound.id}")
                             }
                         )

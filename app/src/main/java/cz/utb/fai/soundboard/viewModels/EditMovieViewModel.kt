@@ -22,8 +22,6 @@ class EditMovieViewModel(
 
     var movie by mutableStateOf<MovieModel?>(null)
 
-
-
     var movieName by mutableStateOf(
         savedStateHandle["movieName"] ?: ""
     )
@@ -34,11 +32,9 @@ class EditMovieViewModel(
 
     init {
         val movieId = movieIdMutable
-        Log.e("XXXXXXXXXXX", "MovieId ${movieId}")
         if (movieId != null && movieId >= 0){
             viewModelScope.launch {
                 movie = repository.getMovie(movieId)
-                Log.e("TTTTTTTTTTTT", "${movie!!.name}")
                 movieName = movie!!.name
                 movieCharacters = movie!!.characters
             }
@@ -86,9 +82,7 @@ class EditMovieViewModel(
             }
             else{
                 val newMovie = MovieModel(id = null, name = movieName, characters = movieCharacters)
-                repository.addMovie(newMovie)
-                movieIdMutable = newMovie.id
-                // TODO: toto nefunguje bez entity
+                movieIdMutable = repository.addMovie(newMovie)
             }
         }
     }

@@ -14,11 +14,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 import cz.utb.fai.soundboard.database.SoundboardRepository
 import cz.utb.fai.soundboard.domainModels.MovieModel
 import cz.utb.fai.soundboard.domainModels.SoundModel
-import kotlinx.coroutines.launch
+
 
 enum class SortingOrder {
     ASC, DESC
@@ -39,11 +40,9 @@ class SoundsViewModel(
 
         init {
             val movieId = movieId
-            Log.e("XXXXXXXXXXX", "MovieId ${movieId}")
-            if (movieId != null && movieId >= 0){
+            if (movieId >= 0){
                 viewModelScope.launch {
                     movie = repository.getMovie(movieId)
-                    Log.e("TTTTTTTTTTTT", "${movie!!.name}")
                     movieName = movie!!.name
                 }
             }
@@ -79,8 +78,8 @@ class SoundsViewModel(
         }
 
         list = when (order) {
-            SortingOrder.ASC -> list.sortedBy { it.name }
-            SortingOrder.DESC -> list.sortedByDescending { it.name }
+            SortingOrder.ASC -> list.sortedBy { it.name.lowercase() }
+            SortingOrder.DESC -> list.sortedByDescending { it.name.lowercase() }
         }
 
         list
@@ -89,36 +88,6 @@ class SoundsViewModel(
         SharingStarted.Eagerly,
         emptyList()
     )
-
-//    val filteredSounds: List<SoundModel>
-//        get() {
-//            var list = testSounds
-//
-//            if (searchQuery.isNotBlank()) {
-//                list = list.filter {
-//                    it.name.contains(searchQuery, ignoreCase = true)
-//                }
-//            }
-//
-//            characterFilter?.let { character ->
-//                list = list.filter { it.character == character }
-//            }
-//
-//            list = when (sortOrder) {
-//                SortingOrder.ASC -> list.sortedBy { it.name }
-//                SortingOrder.DESC -> list.sortedByDescending { it.name }
-//            }
-//
-//            return list
-//        }
-
-
-//    private val testSounds = listOf(
-//        SoundModel(1, "Proc se na me tak divas", "Blue", 0,""),
-//        SoundModel(2, "Ahooj", "Kate", 0, ""),
-//        SoundModel(3, "Omlouvam se", "Norbit", 0, ""),
-//        SoundModel(3, "To vtip", "Wong", 0, "")
-//    )
 
     val characters: StateFlow<List<String>> =
         repository.getMovieCharacters(movieId).stateIn(

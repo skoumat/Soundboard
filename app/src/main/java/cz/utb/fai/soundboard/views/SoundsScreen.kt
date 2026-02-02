@@ -12,20 +12,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import cz.utb.fai.soundboard.SoundboardApp
-import cz.utb.fai.soundboard.services.ExoPlayerObj
-import cz.utb.fai.soundboard.viewModels.SortingOrder
-
-import cz.utb.fai.soundboard.viewModels.SoundsViewModel
-import cz.utb.fai.soundboard.viewModels.SoundsViewModelFatory
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.core.net.toUri
 
+import cz.utb.fai.soundboard.R
+import cz.utb.fai.soundboard.SoundboardApp
+import cz.utb.fai.soundboard.services.ExoPlayerObj
+import cz.utb.fai.soundboard.viewModels.SortingOrder
+import cz.utb.fai.soundboard.viewModels.SoundsViewModel
+import cz.utb.fai.soundboard.viewModels.SoundsViewModelFatory
 
 @Composable
 fun SoundsScreen(
@@ -179,7 +180,10 @@ fun SoundsScreen(
                 horizontalArrangement = Arrangement.Center
             )
             {
-                Text(viewModel.movieName, style = MaterialTheme.typography.titleMedium) // TODO: movie name
+                Text(
+                    viewModel.movieName,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = colorResource(id = R.color.green))
             }
 
             Spacer(modifier = Modifier.height(paddingMiddle))

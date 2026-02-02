@@ -1,10 +1,10 @@
 package cz.utb.fai.soundboard.mappers
 
-import cz.utb.fai.soundboard.database.entities.MovieEntity
-import cz.utb.fai.soundboard.domainModels.MovieModel
-
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+
+import cz.utb.fai.soundboard.database.entities.MovieEntity
+import cz.utb.fai.soundboard.domainModels.MovieModel
 
 val json = Json { encodeDefaults = true }
 

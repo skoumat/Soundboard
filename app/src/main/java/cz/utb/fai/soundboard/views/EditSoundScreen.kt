@@ -1,5 +1,6 @@
 package cz.utb.fai.soundboard.views
 
+import android.util.Log
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,7 +21,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
-
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +55,7 @@ fun EditSoundScreen(
         factory = EditSoundViewModelFactory((LocalContext.current.applicationContext as SoundboardApp).repository)
     )
 
-    //val characters by viewModel.characters.collectAsState()
+    val characters by viewModel.characters.collectAsState()
 
     val context = LocalContext.current
 
@@ -117,7 +117,7 @@ fun EditSoundScreen(
                 var expanded by remember { mutableStateOf(false) }
                 Box {
                     OutlinedTextField(
-                        value = if (viewModel.characters.size != 0) viewModel.characters.first() else "", // TODO:
+                        value = viewModel.selectedCharacter,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Character") },
@@ -134,7 +134,7 @@ fun EditSoundScreen(
                         onDismissRequest = { expanded = false },
                         modifier = Modifier.width(200.dp) // Optional: control width
                     ) {
-                        viewModel.characters.forEach { character ->
+                        characters.forEach { character ->
                             DropdownMenuItem(
                                 text = { Text(character) },
                                 onClick = {

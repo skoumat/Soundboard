@@ -8,6 +8,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 
 import cz.utb.fai.soundboard.database.SoundboardRepository
 import cz.utb.fai.soundboard.domainModels.SoundModel
@@ -25,16 +28,12 @@ class EditSoundViewModel(
     var sound by mutableStateOf<SoundModel?>(null)
 
     init {
-        Log.e("EEEEEEEEEE", "MovieId = ${movieId}")
-        Log.e("FFFFFFFFFF", "SoundId = ${soundIdMutable}")
-
         val soundId = soundIdMutable
         if (soundId != null && soundId >= 0){
-            Log.e("OOOOOOOOOOOO", "SoundId = ${soundId}")
             viewModelScope.launch {
                 sound = repository.getSound(soundId)
                 soundName = sound!!.name
-                characters = sound!!.characters // TODO:
+                selectedCharacter = sound!!.characters.first()
                 soundFileUriString = sound!!.filePathString
             }
         }
@@ -43,21 +42,24 @@ class EditSoundViewModel(
     var soundName by mutableStateOf(savedStateHandle["soundName"] ?: "")
         private set
 
-    var characters by mutableStateOf<List<String>>(savedStateHandle["selectedCharacter"] ?: emptyList())
-        private set
+//    var characters by mutableStateOf<List<String>>(savedStateHandle["selectedCharacter"] ?: emptyList())
+//        private set
+
+    var selectedCharacter by mutableStateOf<String>(savedStateHandle["selectedCharacter"] ?: "")
+       private set
 
     var soundFileUriString by mutableStateOf<String?>(savedStateHandle["soundFileUriString"])
         private set
 
-//    val characters: StateFlow<List<String>> = (
-//                soundIdMutable?.let { soundId ->
-//                    repository.getSoundCharacters(soundId)
-//                } ?: flowOf(emptyList())
-//                ).stateIn(
-//                viewModelScope,
-//                SharingStarted.Eagerly,
-//                emptyList()
-//    )
+    val characters: StateFlow<List<String>> = (
+                movieId.let {
+                    repository.getMovieCharacters(movieId)
+                }
+                ).stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                emptyList()
+    )
 
 
     fun onSoundNameChange(value: String) {
@@ -66,7 +68,7 @@ class EditSoundViewModel(
     }
 
     fun onCharacterSelected(character: String) {
-        characters.plus(character)
+        selectedCharacter = character
         savedStateHandle["selectedCharacter"] = character
     }
 
@@ -78,7 +80,7 @@ class EditSoundViewModel(
         viewModelScope.launch {
             val soundId = soundIdMutable
             val soundFileUriStringInner = soundFileUriString
-            val selectedCharacterInner = if (characters.size != 0) characters else listOf("Other")
+            val selectedCharacterInner = selectedCharacter
             if (soundFileUriStringInner != null){
                 if (soundId != null && soundId >= 0){
                     repository.updateSound(
@@ -87,7 +89,7 @@ class EditSoundViewModel(
                             movieId = movieId,
                             filePathString = soundFileUriStringInner,
                             name = soundName,
-                            characters = selectedCharacterInner,
+                            characters = listOf(selectedCharacterInner),
                         ))
                 }
                 else{
@@ -96,11 +98,10 @@ class EditSoundViewModel(
                         movieId = movieId,
                         filePathString = soundFileUriStringInner,
                         name = soundName,
-                        characters = selectedCharacterInner // TODO:
+                        characters = listOf(selectedCharacterInner)
                     )
-                    repository.addSound(newSound)
-                    soundIdMutable = newSound.id
-                    // TODO: toto nefunguje bez entity
+
+                    soundIdMutable = repository.addSound(newSound)
                 }
             }
 

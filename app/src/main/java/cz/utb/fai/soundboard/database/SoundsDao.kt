@@ -6,15 +6,14 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import cz.utb.fai.soundboard.database.entities.MovieEntity
+import kotlinx.coroutines.flow.Flow
 
 import cz.utb.fai.soundboard.database.entities.SoundEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SoundsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addSound(sound: SoundEntity)
+    suspend fun addSound(sound: SoundEntity): Long
 
     @Update
     suspend fun updateSound(sound: SoundEntity)

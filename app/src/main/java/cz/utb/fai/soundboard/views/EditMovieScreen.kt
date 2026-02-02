@@ -3,11 +3,12 @@ package cz.utb.fai.soundboard.views
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +49,7 @@ fun EditMovieScreen(
                 }
 
                 Text(
-                    text = if (movieId == null) "New Movie" else "Edit Movie",
+                    text = if (movieId == null || movieId < 0) "New Movie" else "Edit Movie",
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
@@ -89,19 +90,26 @@ fun EditMovieScreen(
 
 
 
-                Text("Characters", style = MaterialTheme.typography.titleMedium)
+                Column(
+                    modifier = Modifier.fillMaxHeight(0.5f)
+                ){
+                    Text("Characters", style = MaterialTheme.typography.titleMedium)
 
-                viewModel.movieCharacters.forEach { character ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(character, modifier = Modifier.weight(1f))
-                        IconButton(onClick = { viewModel.removeCharacter(character) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Remove")
+                    LazyColumn {
+                        items(viewModel.movieCharacters) { character ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(character, modifier = Modifier.weight(1f))
+                                IconButton(onClick = { viewModel.removeCharacter(character) }) {
+                                    Icon(Icons.Default.Delete, contentDescription = "Remove")
+                                }
+                            }
                         }
                     }
                 }
+
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(

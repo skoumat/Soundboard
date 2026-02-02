@@ -6,9 +6,9 @@ sealed class Screen(val route: String) {
     data object EditMovie : Screen(Routes.EDIT_MOVIE){
         fun create(movieId: Long? = null): String {
             if (movieId != null) {
-                return  "edit_movie?movieId=$movieId"
+                return  "edit_movie/$movieId"
             }
-            else return "edit_movie"
+            else return "edit_movie/-1"
         }
     }
 

@@ -13,7 +13,7 @@ import cz.utb.fai.soundboard.database.entities.MovieEntity
 @Dao
 interface MoviesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) // nepotrebuju really, ale sure Using REPLACE strategy so if we fetch updated info for the same subject, it updates the DB
-    suspend fun addMovie(movie: MovieEntity)
+    suspend fun addMovie(movie: MovieEntity): Long
 
     @Update
     suspend fun updateMovie(movie: MovieEntity)
@@ -29,12 +29,5 @@ interface MoviesDao {
 
     @Query("SELECT charactersJson FROM movies WHERE id == :id LIMIT 1")
     suspend fun getMovieCharacters(id: Long): String?
-
-    // TODO: do I even need seraching via text and filtering
-
-    // Select specific subject by shortcut and department (or just shortcut if unique)
-//    @Query("SELECT * FROM subject_info WHERE shortcut = :shortcut LIMIT 1")
-//    suspend fun selectByShortcut(shortcut: String): SubjectInfoEntity?
-
 
 }

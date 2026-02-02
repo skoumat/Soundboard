@@ -10,7 +10,6 @@ import cz.utb.fai.soundboard.domainModels.SoundModel
 import cz.utb.fai.soundboard.mappers.toDomainModel
 import cz.utb.fai.soundboard.mappers.toEntityModel
 import cz.utb.fai.soundboard.mappers.parse
-
 import cz.utb.fai.soundboard.services.api.MovieDetailsModel
 import cz.utb.fai.soundboard.services.api.WikidataApiService
 import cz.utb.fai.soundboard.services.api.WikidataResponse
@@ -43,8 +42,9 @@ class SoundboardRepository (
     }
 
 
-    suspend fun addMovie(movie: MovieModel){
-        movieDao.addMovie(movie.toEntityModel())
+    suspend fun addMovie(movie: MovieModel) : Long{
+        val movieEntity = movie.toEntityModel()
+        return movieDao.addMovie(movieEntity)
     }
     suspend fun updateMovie(movie: MovieModel){
         movieDao.updateMovie(movie.toEntityModel())
@@ -66,8 +66,8 @@ class SoundboardRepository (
         return soundDao.getSound(id).toDomainModel()
     }
 
-    suspend fun addSound(sound: SoundModel){
-        soundDao.addSound(sound.toEntityModel())
+    suspend fun addSound(sound: SoundModel): Long{
+        return soundDao.addSound(sound.toEntityModel())
     }
     suspend fun updateSound(sound: SoundModel){
         soundDao.updateSound(sound.toEntityModel())
@@ -96,14 +96,12 @@ class SoundboardRepository (
     """.trimIndent()
 
         var response : WikidataResponse? = null
-        Log.e("fetchMoviesFromWiki", "before response")
         try{
             response = apiService.getMovies(sparqlQuery)
         } catch (e: Exception) {
             Log.e("WIKIDATA", e.toString())
         }
 
-        Log.e("fetchMoviesFromWiki", "after response")
 
         val moviesMap = mutableMapOf<String, MovieDetailsModel>()
 
@@ -130,8 +128,6 @@ class SoundboardRepository (
                 )
             }
         }
-
-        Log.e("fetchMoviesFromWiki", "after mapping")
 
         return moviesMap.values.toList()
     }

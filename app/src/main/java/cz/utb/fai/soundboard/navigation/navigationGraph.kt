@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+
 import cz.utb.fai.soundboard.views.EditMovieScreen
 import cz.utb.fai.soundboard.views.EditSoundScreen
 import cz.utb.fai.soundboard.views.MovieDetailsScreen
-
 import cz.utb.fai.soundboard.views.MoviesScreen
 import cz.utb.fai.soundboard.views.SoundsScreen
 
@@ -27,11 +27,10 @@ fun SoundboardNavGraph() {
             MoviesScreen(
                 navController = navController,
                 onMovieClick = { movieId ->
-                    Log.e("CCCCCCCCCCCC", "MovieId = ${movieId}")
                     navController.navigate(Screen.Sounds.create(movieId))
                 },
                 onAddMovie = {
-                    navController.navigate(Screen.EditMovie.route)
+                    navController.navigate(Screen.EditMovie.create(null))
                 }
             )
         }

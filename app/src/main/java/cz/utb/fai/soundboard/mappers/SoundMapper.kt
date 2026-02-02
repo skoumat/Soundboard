@@ -3,7 +3,6 @@ package cz.utb.fai.soundboard.mappers
 import cz.utb.fai.soundboard.database.entities.SoundEntity
 import cz.utb.fai.soundboard.domainModels.SoundModel
 
-
 fun SoundEntity.toDomainModel(): SoundModel {
     return SoundModel(
         id = this.id,

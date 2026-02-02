@@ -9,12 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
+import cz.utb.fai.soundboard.R
 import cz.utb.fai.soundboard.domainModels.MovieModel
-import cz.utb.fai.soundboard.navigation.Routes
 import cz.utb.fai.soundboard.viewModels.MoviesViewModel
 
 @Composable
@@ -50,10 +51,13 @@ fun MovieTile(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
             ) {
-                IconButton(
+                IconButton( // TODO: udelat jako FAB
                     onClick = { menuExpanded = true }
                 ) {
-                    Icon(Icons.Default.MoreVert, contentDescription = null)
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = null,
+                        tint = colorResource(R.color.green))
                 }
 
                 DropdownMenu(
@@ -71,7 +75,6 @@ fun MovieTile(
                             modifier = Modifier.height(32.dp),
                             onClick = {
                                 menuExpanded = false
-                                Log.e("PPPPPPPPPPPP", "${movie.id}")
                                 navController.navigate("edit_movie/${movie.id}")
                             }
                         )

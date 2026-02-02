@@ -15,10 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import cz.utb.fai.soundboard.SoundboardApp
-
 import androidx.compose.ui.platform.LocalContext
 
+import cz.utb.fai.soundboard.SoundboardApp
 import cz.utb.fai.soundboard.viewModels.MoviesViewModel
 import cz.utb.fai.soundboard.viewModels.MoviesViewModelFactory
 
@@ -65,7 +64,7 @@ fun MoviesScreen(
 //                                fabExpanded = false
 //                            }
 //                        ) {
-//                            Text("Add sound")
+//                            Text("Add sound") // TODO: novy sound?
 //                        }
                     }
                 }
@@ -95,6 +94,8 @@ fun MoviesScreen(
                 singleLine = true
             )
 
+            // TODO: razeni ASC a DESC
+
             Spacer(modifier = Modifier.height(16.dp))
 
 
@@ -110,7 +111,6 @@ fun MoviesScreen(
                         navController = navController,
                         viewModel = viewModel,
                         onClick = {
-                            Log.e("BBBBBBBBBBBBBB", "MovieId = ${movie.id}")
                             onMovieClick(movie.id!!)
                         }
                     )
